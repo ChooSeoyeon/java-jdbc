@@ -34,4 +34,16 @@ public class JdbcTemplate {
             throw new RuntimeException(e);
         }
     }
+
+    public <T> List<T> query(final String sql, final RowMapper<T> rowMapper, Object... args)
+            throws DataAccessException {
+        setParameters(args);
+        return query(sql, args, new RowMapperResultSetExtractor<>(rowMapper));
+    }
+
+    private void setParameters(PreparedStatement statement, Object... parameters) throws SQLException {
+        for (int i = 0; i < parameters.length; i++) {
+            statement.setObject(i + 1, parameters[i]);
+        }
+    }
 }
